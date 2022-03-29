@@ -131,7 +131,7 @@ if len(area_name) > 3:
     pct_below_10mbps = len(out[out.avg_d_kbps < 10000]) / len(out)
     average_speed = out['Avg Download(Mbps)'].mean()
 
-    st.markdown(unicef_blue(area_name), unsafe_allow_html=True)
+    st.markdown(unicef_blue(f'{facility} in {area_name}'), unsafe_allow_html=True)
     metrics = list()
     metrics.append([f"Total {facility}", total])
     metrics.append(["With Connectivity", f'{has_connectivity / total:.0%}'])
