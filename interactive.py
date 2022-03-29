@@ -4,12 +4,9 @@ from OSMPythonTools.overpass import overpassQueryBuilder, Overpass
 from matplotlib import use
 import streamlit as st
 st.set_page_config(layout="wide")
-from keplergl import KeplerGl
 import pandas as pd
 from sqlalchemy import create_engine
 import plotly.express as px
-import math
-from streamlit_keplergl import keplergl_static
 
 from OSMPythonTools.nominatim import Nominatim
 nominatim = Nominatim()
