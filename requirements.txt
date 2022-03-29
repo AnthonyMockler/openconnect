@@ -1,0 +1,8 @@
+matplotlib==3.5.1
+OSMPythonTools==0.3.4
+pandas==1.4.1
+plotly==5.6.0
+pyquadkey2==0.2.0
+SQLAlchemy==1.4.32
+streamlit==1.8.0
+psycopg2==2.9.3
