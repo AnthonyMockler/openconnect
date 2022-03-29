@@ -1,7 +1,6 @@
 from pyquadkey2 import quadkey as qk
 from OSMPythonTools.cachingStrategy import CachingStrategy, JSON, Pickle
 from OSMPythonTools.overpass import overpassQueryBuilder, Overpass
-from matplotlib import use
 import streamlit as st
 st.set_page_config(layout="wide")
 import pandas as pd
