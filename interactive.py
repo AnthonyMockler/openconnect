@@ -76,8 +76,8 @@ def filter_elements(result):
     filtered = [element for element in elements if element is not None]
     return filtered
 
-def unicef_blue(text):
-    outstring = f"""<h3 style="color:#1cabe2;">{text}</h1>"""
+def unicef_blue(text,size='h3'):
+    outstring = f"""<{size} style="color:#1cabe2;">{text}</h1>"""
     return outstring
 @st.experimental_memo(show_spinner=False)
 def get_overpass_query(area_name):
@@ -88,8 +88,7 @@ def get_overpass_query(area_name):
         result = overpass.query(query,timeout=60)
     return result
 
-st.title('OpenConnect')
-st.subheader("Connectivity Report for:")
+st.markdown(unicef_blue('OpenConnect Connectivity Report for:','h3'),unsafe_allow_html=True)
 with st.expander("Choose region"):
     boxcols = st.columns([1,2])
     map_zoom = 5
@@ -195,5 +194,7 @@ with st.expander("Summary statistics"):
         bottom20_plot = make_bar(bottom20)
         st.plotly_chart(bottom20_plot, use_container_width=True)
 
-
+with st.expander("About this app"):
+    with open('README.md', 'r') as f:
+        st.markdown(f.read())
 #top10[['name','Average Download Speed (Mbps)']].plot()
