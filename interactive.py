@@ -21,7 +21,12 @@ pd.options.plotting.backend = 'plotly'
 
 countries = ['Brunei', 'Cambodia', 'Cook Islands', 'Fiji', 'Indonesia', 'Kiribati', 'Laos', 'Malaysia', 'Marshall Islands', 'Micronesia', 'Mongolia', 'Myanmar',
              'Nauru', 'Niue', 'Palau', 'Papua New Guinea', 'Philippines', 'Samoa', 'Solomon Islands', 'Thailand', 'Timor Leste', 'Tokelau', 'Tonga', 'Tuvalu', 'Vanuatu', 'Vietnam']
-
+amenities = dict()
+amenities['Schools'] = 'school'
+amenities['Hospitals'] = 'hospital'
+def unicef_blue(text,size='h3'):
+    outstring = f"""<{size} style="color:#1cabe2;">{text}</h1>"""
+    return outstring
 
 def make_details(element):
     tags = element.tags()
@@ -47,9 +52,7 @@ def make_details(element):
 def make_quadkey(row):
     return qk.from_geo((row['lat'], row['lon']), 14)
 
-def merge_with_connectivity(result):
-    filtered = filter_elements(result)
-    out = pd.DataFrame(filtered)
+def merge_with_connectivity(out):
     out = out[~out.lat.isna()]
     out['quadkey_14'] = out.apply(make_quadkey, axis=1)
     quadkeys = tuple(out.quadkey_14.astype('str').unique())
@@ -82,14 +85,9 @@ def filter_elements(result):
 def download_data(viz):
     return viz.to_csv(index=False)
 
-def unicef_blue(text,size='h3'):
-    outstring = f"""<{size} style="color:#1cabe2;">{text}</h1>"""
-    return outstring
+
 @st.experimental_memo(show_spinner=False)
 def get_overpass_query(area_name,facility):
-    amenities = dict()
-    amenities['Schools'] = 'school'
-    amenities['Hospitals'] = 'hospital'
     areaId = nominatim.query(area_name).areaId()
     query = overpassQueryBuilder(area=areaId, elementType='way', selector=f'"amenity"="{amenities[facility]}"',
                                  out='body', includeCenter=True, includeGeometry=True)
@@ -106,22 +104,41 @@ with st.expander("Choose region"):
         
 
     with boxcols[1]:
-        region = st.radio("Region Type",['Country','Custom Region','Custom CSV (Coming Soon)'])
+        region = st.radio("Region Type",['Country','Custom Region','Custom CSV (Beta)'])
         if region == 'Country':
             area_name = st.selectbox("",countries,index=19)
             map_zoom = 5
         if region =='Custom Region':
             area_name = st.text_input("Enter a City, Country","",placeholder="City, Country (e.g. Bangkok, Thailand)")
             map_zoom = 9
-        if region=='Custom CSV (Coming Soon)':
-            area_name = st.selectbox("",countries,index=19)
+        if region=='Custom CSV (Beta)':
+            area_name = ''
+            out = None
+            infile_amenity = st.radio('This is a list of',['Schools','Hospitals'])
+            amenity_type = amenities[infile_amenity]
+            infile = st.file_uploader('Upload a CSV. Must have columns named "name", "lat" and "lon"')
+            if infile is not None:
+                out = pd.read_csv(infile)
+                if not "lat" in out.columns:
+                    latcol = st.radio('Latitude in column:',out.columns)
+                    loncol = st.radio('Longitude in column',out.columns)
+                    namecol = st.radio('Facility Name in column',out.columns)
+                    out = out.rename(columns={latcol:'lat',loncol:'lon',namecol:'name'})
+                out['amenity'] = amenity_type
+                area_name = 'Custom Area'
+
 
 
 
 if len(area_name) > 3:
-    result = get_overpass_query(area_name,facility)
+    if area_name == 'Custom Area':
+        pass
+    else:
+        result = get_overpass_query(area_name,facility)
+        filtered = filter_elements(result)
+        out = pd.DataFrame(filtered)
     with st.spinner(f'Getting connectivity estimates for {area_name}'):
-        out = merge_with_connectivity(result)
+        out = merge_with_connectivity(out)
     out['Avg Download(Mbps)'] = round((out.avg_d_kbps / 1000), 1)
     out['Avg Upload(Mbps)'] = round((out.avg_u_kbps / 1000), 1)
     out['Total Devices'] = round((out.devices * 4), 0)
@@ -168,17 +185,20 @@ if len(area_name) > 3:
 
 
     with st.expander(f"{facility} without connectivity"):
-        map_2 = px.scatter_mapbox(viz[pd.isnull(viz['Avg Download(Mbps)'])],
-                                lat="lat", lon="lon",
-                                color="connectivity_rank",
-                                color_continuous_scale=px.colors.colorbrewer.RdYlGn,
-                                size_max=15,
-                                zoom=map_zoom,
-                                mapbox_style='carto-positron',
-                                hover_data=['name'],
-                                height=700)
-        map_2.layout.update(showlegend=False)
-        st.plotly_chart(map_2, use_container_width=True)
+        if len(viz[pd.isnull(viz['Avg Download(Mbps)'])]):
+            map_2 = px.scatter_mapbox(viz[pd.isnull(viz['Avg Download(Mbps)'])],
+                                    lat="lat", lon="lon",
+                                    color="connectivity_rank",
+                                    color_continuous_scale=px.colors.colorbrewer.RdYlGn,
+                                    size_max=15,
+                                    zoom=map_zoom,
+                                    mapbox_style='carto-positron',
+                                    hover_data=['name'],
+                                    height=700)
+            map_2.layout.update(showlegend=False)
+            st.plotly_chart(map_2, use_container_width=True)
+        else:
+            st.write(f"No {facility} in dataset without connectivity")
 
 
     with st.expander("Summary statistics"):
@@ -187,7 +207,7 @@ if len(area_name) > 3:
         col1, col2 = st.columns(2)
 
         with col1:
-            st.subheader(f'10 Fastest {str.lower(facility)}')
+            st.subheader(f'10 fastest {str.lower(facility)}')
             top20 = viz.sort_values('Avg Download(Mbps)', ascending=False)[0:10]
             top20 = top20.set_index('name').drop_duplicates()
             top20_plot = make_bar(top20)
