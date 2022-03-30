@@ -69,9 +69,10 @@ def make_bar(df):
     df.index = df.index.str.slice(stop=20)
     df.index = df.index + '...'
     df = df[~df.index.duplicated(keep='first')]
-    plot = df['Avg Download(Mbps)'].plot(kind='barh')
+    plot = df['Avg Download(Mbps)'].plot(kind='barh', color_discrete_sequence=["#1CABE2"])
     plot.layout.update(showlegend=False)
     plot.update_xaxes(tickangle=15)
+    plot.update_layout({'plot_bgcolor': 'rgba(0, 0, 0, 0)','paper_bgcolor': 'rgba(0, 0, 0, 0)'})
     return plot
 def filter_elements(result):
     elements = list()
@@ -167,7 +168,9 @@ if len(area_name) > 3:
             'Total Devices']].copy()
     viz['connectivity_rank'] = viz['Avg Download(Mbps)'].rank(pct=True)
     viz_has_connectivity = viz[pd.notna(viz['Avg Download(Mbps)'])]
-    average = out['Avg Download(Mbps)'].plot(kind='hist')
+    average = out['Avg Download(Mbps)'].plot(kind='hist', color_discrete_sequence=["#1CABE2"])
+    average.update_layout({'plot_bgcolor': 'rgba(0, 0, 0, 0)','paper_bgcolor': 'rgba(0, 0, 0, 0)'})
+    
 
     st.download_button("Download CSV", download_data(viz),
                     file_name=f'{area_name}.csv')
@@ -181,6 +184,12 @@ if len(area_name) > 3:
                             hover_data=['name', 'Avg Download(Mbps)'],
                             height=700)
     map_1.layout.update(showlegend=False)
+    map_1.update_layout(
+    mapbox=dict(
+        accesstoken='pk.eyJ1IjoidG9vbHNmb3JyYWRpY2FscyIsImEiOiJjazF0Mzd2bWgwa3kzM2hsaWxnbHhwc211In0.UeliSBmRYh9nUQPc3E1UfQ',
+          style = 'mapbox://styles/toolsforradicals/ckodxjrer0bjc17mt4d1ez8nv'
+    ),
+)
     st.plotly_chart(map_1, use_container_width=True)
 
 
@@ -196,6 +205,12 @@ if len(area_name) > 3:
                                     hover_data=['name'],
                                     height=700)
             map_2.layout.update(showlegend=False)
+            map_2.update_layout(
+    mapbox=dict(
+        accesstoken='pk.eyJ1IjoidG9vbHNmb3JyYWRpY2FscyIsImEiOiJjazF0Mzd2bWgwa3kzM2hsaWxnbHhwc211In0.UeliSBmRYh9nUQPc3E1UfQ',
+          style = 'mapbox://styles/toolsforradicals/ckodxjrer0bjc17mt4d1ez8nv'
+    ),
+)
             st.plotly_chart(map_2, use_container_width=True)
         else:
             st.write(f"No {facility} in dataset without connectivity")

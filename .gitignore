@@ -1,2 +1,4 @@
-.streamlit/*
+.streamlit/secrets.toml
+.streamlit/secrets*
+.streamlit/secrets_prod.toml
 cache.pickle.gzip
