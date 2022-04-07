@@ -2,3 +2,5 @@
 .streamlit/secrets*
 .streamlit/secrets_prod.toml
 cache.pickle.gzip
+cache/*
+*.ipynb

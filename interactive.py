@@ -31,18 +31,14 @@ def unicef_blue(text,size='h3'):
 def set_font():
     return """
         <style>
-@font-face {
-  font-family: 'Roboto';
-  font-style: normal;
-  font-weight: 100;
-  src: url(https://fonts.googleapis.com/css2?family=Roboto&display=swap);
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-
-    html, body, [class*="css"]  {
-    font-family: 'Roboto', sans-serif;
-    font-weight: 100;
-    }
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700&display=swap');
+        html, body, [class*="css"]  {
+        font-family: "Roboto", sans-serif !important;
+        font-weight: 300;
+        };
+        .st-ae {
+            font-family: "Roboto", sans-serif !important;
+        }
     </style>
 
     """
@@ -116,7 +112,7 @@ def get_overpass_query(area_name,facility):
     return result
 
 st.markdown(unicef_blue('OpenConnect Connectivity Report for:','h3'),unsafe_allow_html=True)
-with st.expander("Choose region"):
+with st.expander("Choose region",expanded=True):
     boxcols = st.columns([1,2])
     map_zoom = 5
     with boxcols[0]:
