@@ -108,7 +108,7 @@ def get_overpass_query(area_name,facility):
     query = overpassQueryBuilder(area=areaId, elementType='way', selector=f'"amenity"="{amenities[facility]}"',
                                  out='body', includeCenter=True, includeGeometry=True)
     with st.spinner(f"Retrieving {facility} in {area_name}, may take up to 60 seconds"):
-        result = overpass.query(query,timeout=60)
+        result = overpass.query(query,timeout=120)
     return result
 
 st.markdown(unicef_blue('OpenConnect Connectivity Report for:','h3'),unsafe_allow_html=True)
