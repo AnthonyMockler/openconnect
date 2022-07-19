@@ -14,6 +14,6 @@
         "EXPOSE 8501",
         "CMD [\"sh setup.sh\"]",
         "ENTRYPOINT [\"streamlit\", \"run\"]",
-        "CMD [\"app.py\"]"
+        "CMD [\"interactive.py\"]"
     ]
 }
