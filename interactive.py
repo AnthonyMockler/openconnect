@@ -1,3 +1,5 @@
+import os
+from dotenv import load_dotenv
 from pyquadkey2 import quadkey as qk
 from OSMPythonTools.cachingStrategy import CachingStrategy, JSON, Pickle
 from OSMPythonTools.overpass import overpassQueryBuilder, Overpass
@@ -12,9 +14,21 @@ nominatim = Nominatim()
 overpass = Overpass()
 CachingStrategy.use(Pickle)
 
+try:
+    connectstring = f"postgresql://{st.secrets['postgres']['user']}:{st.secrets['postgres']['password']}@{st.secrets['postgres']['host']}:{st.secrets['postgres']['port']}/{st.secrets['postgres']['dbname']}"
+    engine = create_engine(connectstring)
+except:
+    load_dotenv()
+    connectstring = 'postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_database}'.format(
+        db_user=os.getenv("DB_USERNAME"),
+        db_password=os.getenv("DB_PASSWORD"),
+        db_host=os.getenv("DB_HOST"),
+        db_port=os.getenv("DB_PORT"),
+        db_database=os.getenv("DB_DATABASE")
+    )
+    engine = create_engine(connectstring)
 
-connectstring = f"postgresql://{st.secrets['postgres']['user']}:{st.secrets['postgres']['password']}@{st.secrets['postgres']['host']}:{st.secrets['postgres']['port']}/{st.secrets['postgres']['dbname']}"
-engine = create_engine(connectstring)
+
 #engine = create_engine('sqlite:///ookla.sqlite')
 pd.options.plotting.backend = 'plotly'
 
