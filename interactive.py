@@ -12,7 +12,6 @@ import plotly.express as px
 from OSMPythonTools.nominatim import Nominatim
 nominatim = Nominatim()
 overpass = Overpass(endpoint="https://maps.mail.ru/osm/tools/overpass/api/interpreter")
-CachingStrategy.use(Pickle)
 
 try:
     connectstring = f"postgresql://{st.secrets['postgres']['user']}:{st.secrets['postgres']['password']}@{st.secrets['postgres']['host']}:{st.secrets['postgres']['port']}/{st.secrets['postgres']['dbname']}"
