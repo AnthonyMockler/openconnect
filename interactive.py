@@ -15,9 +15,6 @@ overpass = Overpass()
 CachingStrategy.use(Pickle)
 
 try:
-    connectstring = f"postgresql://{st.secrets['postgres']['user']}:{st.secrets['postgres']['password']}@{st.secrets['postgres']['host']}:{st.secrets['postgres']['port']}/{st.secrets['postgres']['dbname']}"
-    engine = create_engine(connectstring)
-except:
     load_dotenv()
     connectstring = 'postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_database}'.format(
         db_user=os.getenv("DB_USERNAME"),
@@ -26,6 +23,9 @@ except:
         db_port=os.getenv("DB_PORT"),
         db_database=os.getenv("DB_DATABASE")
     )
+    engine = create_engine(connectstring)
+except:
+    connectstring = f"postgresql://{st.secrets['postgres']['user']}:{st.secrets['postgres']['password']}@{st.secrets['postgres']['host']}:{st.secrets['postgres']['port']}/{st.secrets['postgres']['dbname']}"
     engine = create_engine(connectstring)
 
 
