@@ -1,0 +1,16 @@
+{
+	"schemaVersion" :2 ,
+	"dockerfileLines" :[
+		"FROM python:3.8.9-slim-buster",
+		"RUN mkdir -p /app",
+		"COPY ./ /app",
+		"WORKDIR /app",
+		"RUN ls -a",
+		"RUN pip3 install -U pip",
+		"RUN pip3 install -r requirements.txt",
+        "EXPOSE 8501",
+        "CMD [\"sh setup.sh\"]",
+        "ENTRYPOINT [\"streamlit\", \"run\"]",
+        "CMD [\"app.py\"]"
+    ]
+}
