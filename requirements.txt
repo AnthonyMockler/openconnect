@@ -1,5 +1,5 @@
 click<=8.0.4
-OSMPythonTools==0.3.4
+OSMPythonTools==0.3.5
 pandas==1.4.1
 plotly==5.6.0
 pyquadkey2==0.2.0
