@@ -11,7 +11,7 @@ import plotly.express as px
 
 from OSMPythonTools.nominatim import Nominatim
 nominatim = Nominatim()
-overpass = Overpass()
+overpass = Overpass(endpoint="https://maps.mail.ru/osm/tools/overpass/api/interpreter")
 CachingStrategy.use(Pickle)
 
 try:
