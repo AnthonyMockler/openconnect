@@ -6,3 +6,7 @@ pyquadkey2==0.2.0
 SQLAlchemy==1.4.32
 streamlit==1.8.0
 psycopg2-binary==2.9.3
+protobuf~=3.19.0
+uvicorn
+
+
