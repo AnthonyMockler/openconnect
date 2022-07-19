@@ -12,7 +12,7 @@ import plotly.express as px
 from OSMPythonTools.nominatim import Nominatim
 nominatim = Nominatim()
 overpass = Overpass()
-CachingStrategy.use(Pickle)
+CachingStrategy.use(JSON)
 
 try:
     load_dotenv()
