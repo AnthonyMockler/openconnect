@@ -8,6 +8,6 @@ streamlit==1.8.0
 psycopg2-binary==2.9.3
 protobuf~=3.19.0
 uvicorn
-dotenv
+python-dotenv
 
 
