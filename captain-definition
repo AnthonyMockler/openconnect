@@ -2,6 +2,9 @@
 	"schemaVersion" :2 ,
 	"dockerfileLines" :[
 		"FROM python:3.8.9-slim-buster",
+        "RUN apt-get update",
+		"RUN apt-get upgrade -y",
+		"RUN apt-get install -y gcc",
 		"RUN mkdir -p /app",
 		"COPY ./ /app",
 		"WORKDIR /app",
