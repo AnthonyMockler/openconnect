@@ -1,4 +1,4 @@
-# OpenConnect [Try it now!](https://share.streamlit.io/anthonymockler/openconnect/main/interactive.py)
+# OpenConnect [Try it now!](https://openconnect.unicef.datafordecisionmaking.com/)
 An interactive app for visualising and assessing School / Health Centre connectivity
 
 
