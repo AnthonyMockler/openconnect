@@ -15,6 +15,7 @@ CachingStrategy.use(JSON)
 
 
 ookla = pd.read_parquet('ookla.parquet')
+ookla.index = ookla.index.astype('str')
 pd.options.plotting.backend = 'plotly'
 
 
@@ -69,10 +70,11 @@ def make_quadkey(row):
 def merge_with_connectivity(out):
     out = out[~out.lat.isna()]
     out['quadkey_14'] = out.apply(make_quadkey, axis=1)
+    out['quadkey_14'] = out['quadkey_14'].astype('str')
+    connectivity = ookla[ookla.index.isin(out.quadkey_14)]
     tmp = out.set_index('quadkey_14')
     tmp.index = tmp.index.astype('str')
-    ookla.index = ookla.index.astype('str')
-    tmp = tmp.join(ookla, how='left')
+    tmp = tmp.join(connectivity, how='left')
     tmp = tmp.reset_index().drop_duplicates(
         subset=['name', 'quadkey_14'],
         keep='last').reset_index(drop=True)
