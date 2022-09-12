@@ -1,4 +1,3 @@
-import os
 from pyquadkey2 import quadkey as qk
 from OSMPythonTools.cachingStrategy import CachingStrategy, JSON, Pickle
 from OSMPythonTools.overpass import overpassQueryBuilder, Overpass
