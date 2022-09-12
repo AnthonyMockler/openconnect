@@ -1,19 +1,16 @@
 import os
-from dotenv import load_dotenv
 from pyquadkey2 import quadkey as qk
 from OSMPythonTools.cachingStrategy import CachingStrategy, JSON, Pickle
 from OSMPythonTools.overpass import overpassQueryBuilder, Overpass
 import streamlit as st
 st.set_page_config(layout="wide")
 import pandas as pd
-from sqlalchemy import create_engine
 import plotly.express as px
 
 from OSMPythonTools.nominatim import Nominatim
 nominatim = Nominatim()
 overpass = Overpass()
 CachingStrategy.use(JSON)
-import sqlite3
 
 
 
