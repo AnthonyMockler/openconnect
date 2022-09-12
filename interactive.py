@@ -13,23 +13,11 @@ from OSMPythonTools.nominatim import Nominatim
 nominatim = Nominatim()
 overpass = Overpass()
 CachingStrategy.use(JSON)
-
-try:
-    load_dotenv()
-    connectstring = 'postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_database}'.format(
-        db_user=os.getenv("DB_USERNAME"),
-        db_password=os.getenv("DB_PASSWORD"),
-        db_host=os.getenv("DB_HOST"),
-        db_port=os.getenv("DB_PORT"),
-        db_database=os.getenv("DB_DATABASE")
-    )
-    engine = create_engine(connectstring)
-except:
-    connectstring = f"postgresql://{st.secrets['postgres']['user']}:{st.secrets['postgres']['password']}@{st.secrets['postgres']['host']}:{st.secrets['postgres']['port']}/{st.secrets['postgres']['dbname']}"
-    engine = create_engine(connectstring)
+import sqlite3
 
 
-#engine = create_engine('sqlite:///ookla.sqlite')
+
+ookla = pd.read_parquet('ookla.parquet')
 pd.options.plotting.backend = 'plotly'
 
 
@@ -84,11 +72,9 @@ def make_quadkey(row):
 def merge_with_connectivity(out):
     out = out[~out.lat.isna()]
     out['quadkey_14'] = out.apply(make_quadkey, axis=1)
-    quadkeys = tuple(out.quadkey_14.astype('str').unique())
-    sql_query = f"SELECT quadkey_14, avg_d_kbps, avg_u_kbps, devices from ookla where quadkey_14 in {quadkeys}"
-    ookla = pd.read_sql_query(sql_query, engine, index_col='quadkey_14')
     tmp = out.set_index('quadkey_14')
     tmp.index = tmp.index.astype('str')
+    ookla.index = ookla.index.astype('str')
     tmp = tmp.join(ookla, how='left')
     tmp = tmp.reset_index().drop_duplicates(
         subset=['name', 'quadkey_14'],
@@ -256,6 +242,17 @@ if len(area_name) > 3:
             top20 = top20.set_index('name').drop_duplicates()
             top20_plot = make_bar(top20)
             st.plotly_chart(top20_plot, use_container_width=True)
+        with col2:
+            st.subheader(f'10 slowest {str.lower(facility)}')
+            bottom20 = viz.sort_values('Avg Download(Mbps)', ascending=True)[0:10]
+            bottom20 = bottom20.set_index('name').drop_duplicates()
+            bottom20_plot = make_bar(bottom20)
+            st.plotly_chart(bottom20_plot, use_container_width=True)
+
+with st.expander("About this app"):
+    with open('README.md', 'r') as f:
+        st.markdown(f.read())
+        st.plotly_chart(top20_plot, use_container_width=True)
         with col2:
             st.subheader(f'10 slowest {str.lower(facility)}')
             bottom20 = viz.sort_values('Avg Download(Mbps)', ascending=True)[0:10]
