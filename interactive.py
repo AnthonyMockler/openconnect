@@ -13,8 +13,10 @@ CachingStrategy.use(JSON)
 
 
 
-ookla = pd.read_parquet('ookla.parquet')
-ookla.index = ookla.index.astype('str')
+ookla_fixed = pd.read_parquet('ookla.parquet')
+ookla_combined = pd.read_parquet('combined.parquet')
+ookla_fixed.index = ookla_fixed.index.astype('str')
+ookla_combined.index = ookla_combined.index.astype('str')
 pd.options.plotting.backend = 'plotly'
 
 
@@ -115,6 +117,11 @@ with st.expander("Choose region",expanded=True):
     map_zoom = 5
     with boxcols[0]:
         facility = st.radio("Facility Type:",['Schools','Hospitals'])
+        connectivity_type = st.checkbox("Include Mobile Connectivity?",value=False)
+        if connectivity_type:
+            ookla = ookla_combined
+        else:
+            ookla = ookla_fixed
         
 
     with boxcols[1]:
@@ -240,17 +247,6 @@ if len(area_name) > 3:
             top20 = top20.set_index('name').drop_duplicates()
             top20_plot = make_bar(top20)
             st.plotly_chart(top20_plot, use_container_width=True)
-        with col2:
-            st.subheader(f'10 slowest {str.lower(facility)}')
-            bottom20 = viz.sort_values('Avg Download(Mbps)', ascending=True)[0:10]
-            bottom20 = bottom20.set_index('name').drop_duplicates()
-            bottom20_plot = make_bar(bottom20)
-            st.plotly_chart(bottom20_plot, use_container_width=True)
-
-with st.expander("About this app"):
-    with open('README.md', 'r') as f:
-        st.markdown(f.read())
-        st.plotly_chart(top20_plot, use_container_width=True)
         with col2:
             st.subheader(f'10 slowest {str.lower(facility)}')
             bottom20 = viz.sort_values('Avg Download(Mbps)', ascending=True)[0:10]
